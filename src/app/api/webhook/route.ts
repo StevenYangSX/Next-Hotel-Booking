@@ -3,6 +3,18 @@ import Stripe from "stripe";
 
 import { createBooking, updateHotelRoom } from "@/libs/apis";
 
+type MatadataType = {
+  adults: number;
+  checkinDate: string;
+  checkoutDate: string;
+  children: number;
+  hotelRoom: string;
+  numberOfDays: number;
+  user: string;
+  discount: number;
+  totalPrice: number;
+};
+
 const checkout_session_completed = "checkout.session.completed";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -29,35 +41,25 @@ export async function POST(req: Request, res: Response) {
       const session = event.data.object;
       const {
         // @ts-ignore
-        metadata: {
-          adults,
-          checkinDate,
-          checkoutDate,
-          children,
-          hotelRoom,
-          numberOfDays,
-          user,
-          discount,
-          totalPrice,
-        },
+        metadata,
       } = session;
 
-      console.log("metadata =>", session.metadata);
+      const temp = metadata as unknown as MatadataType;
 
       await createBooking({
-        adults: Number(adults),
-        checkinDate,
-        checkoutDate,
-        children: Number(children),
-        hotelRoom,
-        numberOfDays: Number(numberOfDays),
-        discount: Number(discount),
-        totalPrice: Number(Number(totalPrice).toFixed(2)),
-        user,
+        adults: Number(temp.adults),
+        checkinDate: temp.checkinDate,
+        checkoutDate: temp.checkoutDate,
+        children: Number(temp.children),
+        hotelRoom: temp.hotelRoom,
+        numberOfDays: Number(temp.numberOfDays),
+        discount: Number(temp.discount),
+        totalPrice: Number(Number(temp.totalPrice).toFixed(2)),
+        user: temp.user,
       });
 
       //   Update hotel Room
-      await updateHotelRoom(hotelRoom);
+      await updateHotelRoom(temp.hotelRoom);
 
       return NextResponse.json("Booking successful", {
         status: 200,
