@@ -16,19 +16,23 @@ const Auth = () => {
     name: "",
     password: "",
   };
+
+  const returnUrl = new URLSearchParams(window.location.search).get("returnUrl") || "/";
+
   const [formData, setFormData] = useState(defaultFormData);
   const router = useRouter();
   const { data: session } = useSession();
   console.log("session....", session);
 
   useEffect(() => {
-    if (session) router.push("/");
+    if (session) router.push(returnUrl);
   }, [router, session]);
+
   const loginHandler = async () => {
     try {
       await signIn();
       // push the user to the home page
-      router.push("/");
+      router.push(returnUrl);
     } catch (error: any) {
       toast.error("Something went wrong. ", error);
     }

@@ -15,12 +15,17 @@ import BookRoomCta from "@/components/BookRoomCta/BookRoomCta";
 import toast from "react-hot-toast";
 import { getStripe } from "@/libs/stripe";
 import RoomReview from "@/components/RoomReview/RoomReview";
-
+import { useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 const RoomDetails = (props: { params: { slug: string } }) => {
   const {
     params: { slug },
   } = props;
 
+  const { data: session } = useSession();
+  console.log("check login status ....", session);
+  const router = useRouter();
+  const pathname = usePathname();
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
   const [adults, setAdults] = useState(1);
@@ -45,6 +50,13 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   };
 
   const handleBookNowClick = async () => {
+    if (!session) {
+      router.push(
+        `https://next-hotel-booking.vercel.app/auth?returnRul=${encodeURIComponent(pathname)}`
+      );
+      return;
+    }
+
     if (!checkinDate || !checkoutDate) return toast.error("Please provide checkin / checkout date");
 
     if (checkinDate > checkoutDate) return toast.error("Please choose a valid checkin period");
