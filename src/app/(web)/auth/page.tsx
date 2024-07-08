@@ -7,7 +7,7 @@ import { signUp } from "next-auth-sanity/client";
 import { signIn, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-const page = () => {
+const Auth = () => {
   const inputStyles =
     "border border-gray-300 sm:text-sm text-black rounded-lg block w-full p-2.5 focus:outline-none";
 
@@ -117,4 +117,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Auth;
