@@ -26,7 +26,7 @@ const RoomReview: FC<{ roomId: string }> = ({ roomId }) => {
             <div className="font-semibold mb-2 flex">
               <p>{review.user.name}</p>
               <div className="ml-4 flex items-center text-tertiary-light text-lg">
-                <Rating rating={review.userRating} />
+                <Rating rating={review.userRating} key={review._id} />
               </div>
             </div>
 
